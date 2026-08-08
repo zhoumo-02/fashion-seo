@@ -2,245 +2,86 @@ import os
 from datetime import datetime
 
 
-# =========================
-# 配置
-# =========================
-
-keyword_file = "generator/keywords.txt"
-
-template_file = "generator/template.html"
-
-article_dir = "../articles"
-
-article_list_file = "../articles.html"
+BASE_URL = "https://zhoumo-02.github.io/fashion-Tips-and-Tricks"
 
 
+keyword_file = "keywords.txt"
 
-# =========================
-# 读取关键词
-# =========================
+output_dir = "../articles"
 
-with open(
-    keyword_file,
-    "r",
-    encoding="utf-8"
-) as f:
 
+os.makedirs(output_dir, exist_ok=True)
+
+
+with open(keyword_file,"r",encoding="utf-8") as f:
     keywords = [
-        line.strip()
-        for line in f.readlines()
-        if line.strip()
+        x.strip()
+        for x in f.readlines()
+        if x.strip()
     ]
 
 
-print("关键词数量:", len(keywords))
-
-
-
-# =========================
-# 读取模板
-# =========================
-
-with open(
-    template_file,
-    "r",
-    encoding="utf-8"
-) as f:
-
-    template = f.read()
-
-
-
-# =========================
-# 创建文章目录
-# =========================
-
-os.makedirs(
-    article_dir,
-    exist_ok=True
-)
-
-
-
-today = datetime.now().strftime(
-    "%Y-%m-%d"
-)
-
-
-
-article_links = []
-
-
-
-# =========================
-# 生成文章
-# =========================
-
-for index, keyword in enumerate(keywords):
-
+for keyword in keywords:
 
     filename = keyword + ".html"
 
-
     filepath = os.path.join(
-        article_dir,
+        output_dir,
         filename
     )
 
 
-
-    # -------------------------
-    # 生成相关文章
-    # -------------------------
-
-    related = ""
-
-    count = 0
-
-
-    for item in keywords:
-
-
-        if item != keyword:
-
-
-            related += f"""
-<li>
-<a href="{item}.html">
-{item}
-</a>
-</li>
-"""
-
-
-            count += 1
-
-
-            if count >= 3:
-
-                break
-
-
-
-    # -------------------------
-    # 替换模板
-    # -------------------------
-
-    html = template
-
-
-
-    html = html.replace(
-        "{title}",
-        keyword
-    )
-
-
-    html = html.replace(
-        "{date}",
-        today
-    )
-
-
-    html = html.replace(
-        "{related}",
-        related
-    )
-
-
-
-    # -------------------------
-    # 写入HTML
-    # -------------------------
-
-    with open(
-        filepath,
-        "w",
-        encoding="utf-8"
-    ) as f:
-
-        f.write(html)
-
-
-
-    print(
-        "生成:",
-        filepath
-    )
-
-
-
-    # -------------------------
-    # 文章列表
-    # -------------------------
-
-    article_links.append(
-        f"""
-<li>
-<a href="articles/{filename}">
-{keyword}
-</a>
-</li>
-"""
-    )
-
-
-
-# =========================
-# 自动生成 articles.html
-# =========================
-
-
-articles_html = f"""
+    html = f"""
 <!DOCTYPE html>
 
-<html lang="zh-CN">
-
+<html>
 
 <head>
 
 <meta charset="UTF-8">
 
-
-<title>
-腾龙公司文章中心
-</title>
+<title>{keyword}</title>
 
 
 <meta name="description"
-content="
-腾龙公司企业介绍、品牌资讯、服务内容文章中心。
-">
+content="{keyword}相关介绍和详细说明">
 
 
 </head>
-
 
 
 <body>
 
 
 <h1>
-腾龙公司文章中心
+{keyword}
 </h1>
 
 
-
-<ul>
-
-{''.join(article_links)}
-
-</ul>
+<p>
+本文介绍{keyword}相关内容，
+提供详细说明、操作流程和常见问题。
+</p>
 
 
+<h2>
+常见问题
+</h2>
 
-<br>
+
+<p>
+用户可以查看相关信息。
+</p>
 
 
-<a href="index.html">
+<h2>
+相关文章
+</h2>
+
+
+<a href="../index.html">
 返回首页
 </a>
-
 
 
 </body>
@@ -250,27 +91,12 @@ content="
 """
 
 
-
-with open(
-    article_list_file,
-    "w",
-    encoding="utf-8"
-) as f:
-
-    f.write(
-        articles_html
-    )
-
-
-
-print("======================")
-
-print(
-    "articles.html生成完成"
-)
+    with open(filepath,"w",encoding="utf-8") as f:
+        f.write(html)
 
 
 print(
-    "生成文章数量:",
-    len(keywords)
+    "生成完成:",
+    len(keywords),
+    "篇文章"
 )
