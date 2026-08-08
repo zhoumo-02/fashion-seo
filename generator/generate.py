@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 # =========================
-# 文件路径
+# 配置
 # =========================
 
 keyword_file = "keywords.txt"
@@ -13,6 +13,7 @@ template_file = "template.html"
 article_dir = "../articles"
 
 article_list_file = "../articles.html"
+
 
 
 # =========================
@@ -32,10 +33,8 @@ with open(
     ]
 
 
-print(
-    "读取关键词数量:",
-    len(keywords)
-)
+print("关键词数量:", len(keywords))
+
 
 
 # =========================
@@ -63,12 +62,13 @@ os.makedirs(
 
 
 
-article_links = []
-
-
 today = datetime.now().strftime(
     "%Y-%m-%d"
 )
+
+
+
+article_links = []
 
 
 
@@ -76,7 +76,7 @@ today = datetime.now().strftime(
 # 生成文章
 # =========================
 
-for keyword in keywords:
+for index, keyword in enumerate(keywords):
 
 
     filename = keyword + ".html"
@@ -88,10 +88,47 @@ for keyword in keywords:
     )
 
 
+
+    # -------------------------
+    # 生成相关文章
+    # -------------------------
+
+    related = ""
+
+    count = 0
+
+
+    for item in keywords:
+
+
+        if item != keyword:
+
+
+            related += f"""
+<li>
+<a href="{item}.html">
+{item}
+</a>
+</li>
+"""
+
+
+            count += 1
+
+
+            if count >= 3:
+
+                break
+
+
+
+    # -------------------------
+    # 替换模板
+    # -------------------------
+
     html = template
 
 
-    # 标题
 
     html = html.replace(
         "{title}",
@@ -99,15 +136,22 @@ for keyword in keywords:
     )
 
 
-    # 日期
-
     html = html.replace(
         "{date}",
         today
     )
 
 
-    # 生成文件
+    html = html.replace(
+        "{related}",
+        related
+    )
+
+
+
+    # -------------------------
+    # 写入HTML
+    # -------------------------
 
     with open(
         filepath,
@@ -125,7 +169,10 @@ for keyword in keywords:
     )
 
 
+
+    # -------------------------
     # 文章列表
+    # -------------------------
 
     article_links.append(
         f"""
@@ -145,7 +192,6 @@ for keyword in keywords:
 
 
 articles_html = f"""
-
 <!DOCTYPE html>
 
 <html lang="zh-CN">
@@ -163,8 +209,7 @@ articles_html = f"""
 
 <meta name="description"
 content="
-腾龙公司相关文章，
-品牌介绍、企业资讯和服务信息。
+腾龙公司企业介绍、品牌资讯、服务内容文章中心。
 ">
 
 
@@ -189,6 +234,9 @@ content="
 
 
 
+<br>
+
+
 <a href="index.html">
 返回首页
 </a>
@@ -199,7 +247,6 @@ content="
 
 
 </html>
-
 """
 
 
@@ -216,9 +263,7 @@ with open(
 
 
 
-print(
-    "======================"
-)
+print("======================")
 
 print(
     "articles.html生成完成"
@@ -226,6 +271,6 @@ print(
 
 
 print(
-    "总文章数量:",
+    "生成文章数量:",
     len(keywords)
 )
