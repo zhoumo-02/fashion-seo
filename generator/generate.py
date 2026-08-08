@@ -6,9 +6,9 @@ from datetime import datetime
 # 配置
 # =========================
 
-keyword_file = "keywords.txt"
+keyword_file = "generator/keywords.txt"
 
-template_file = "template.html"
+template_file = "generator/template.html"
 
 article_dir = "../articles"
 
