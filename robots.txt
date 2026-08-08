@@ -1,0 +1,5 @@
+User-agent: *
+
+Allow: /
+
+Sitemap: https://zhoumo-02.github.io/fashion-seo/sitemap.xml
